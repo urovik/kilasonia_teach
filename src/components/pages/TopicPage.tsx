@@ -1,58 +1,57 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { topicsData } from '../../data/topics';
+import { sectionsData } from '../../data/topics';
 import { ILesson } from '../../types';
 
 const TopicPage: React.FC = () => {
   const { topicId } = useParams<{ topicId: string }>();
   const [selectedLesson, setSelectedLesson] = useState<ILesson | null>(null);
   
-  const topic = topicsData.find(t => t.id === topicId);
+  // Ищем раздел по ID
+  const section = sectionsData.find(s => s.id === topicId);
+  
+  // Собираем все уроки из всех глав раздела
+  const allLessons = section?.chapters.flatMap(chapter => chapter.lessons) || [];
 
-  if (!topic) {
-    return <div style={styles.error}>Тема не найдена</div>;
+  if (!section) {
+    return <div style={styles.error}>Раздел не найден</div>;
   }
 
-  const currentLesson = selectedLesson || topic.lessons[0];
+  const currentLesson = selectedLesson || allLessons[0];
 
   return (
     <div>
       <div style={styles.header}>
-        <h1 style={styles.title}>{topic.icon} {topic.title}</h1>
-        <p style={styles.description}>{topic.description}</p>
+        <h1 style={styles.title}>{section.icon} {section.title}</h1>
+        <p style={styles.description}>{section.description}</p>
       </div>
 
       <div style={styles.content}>
         <aside style={styles.sidebar}>
           <h3 style={styles.sidebarTitle}>Уроки</h3>
           <ul style={styles.lessonList}>
-            {topic.lessons.map((lesson: ILesson) => (
+            {allLessons.map((lesson: ILesson) => (
               <li 
                 key={lesson.id}
                 style={{
                   ...styles.lessonItem,
-                  ...(currentLesson.id === lesson.id ? styles.activeLesson : {})
+                  ...(currentLesson?.id === lesson.id ? styles.activeLesson : {})
                 }}
                 onClick={() => setSelectedLesson(lesson)}
               >
                 <div style={styles.lessonItemContent}>
                   <span style={styles.lessonTitle}>{lesson.title}</span>
-                  <span style={styles.lessonDuration}>⏱ {lesson.duration} мин</span>
                 </div>
-                <span style={styles.difficultyBadge(lesson.difficulty)}>
-                  {lesson.difficulty}
-                </span>
               </li>
             ))}
           </ul>
         </aside>
 
         <main style={styles.lessonContent}>
-          <h2 style={styles.lessonTitle}>{currentLesson.title}</h2>
-          <p style={styles.lessonDescription}>{currentLesson.description}</p>
+          <h2 style={styles.lessonTitle}>{currentLesson?.title}</h2>
           
           <div style={styles.lessonBody}>
-            {currentLesson.content.map((paragraph: string, index: number) => (
+            {currentLesson?.content.map((paragraph: string, index: number) => (
               <p key={index} style={styles.paragraph}>
                 {paragraph}
               </p>
@@ -62,29 +61,29 @@ const TopicPage: React.FC = () => {
           <div style={styles.lessonNav}>
             <button 
               onClick={() => {
-                const currentIndex = topic.lessons.findIndex((l: ILesson) => l.id === currentLesson.id);
+                const currentIndex = allLessons.findIndex(l => l.id === currentLesson?.id);
                 if (currentIndex > 0) {
-                  setSelectedLesson(topic.lessons[currentIndex - 1]);
+                  setSelectedLesson(allLessons[currentIndex - 1]);
                 }
               }}
-              disabled={topic.lessons[0].id === currentLesson.id}
+              disabled={allLessons[0]?.id === currentLesson?.id}
               style={styles.navButton}
             >
               ← Предыдущий
             </button>
             
             <span style={styles.lessonCounter}>
-              {topic.lessons.findIndex((l: ILesson) => l.id === currentLesson.id) + 1} / {topic.lessons.length}
+              {allLessons.findIndex(l => l.id === currentLesson?.id) + 1} / {allLessons.length}
             </span>
             
             <button 
               onClick={() => {
-                const currentIndex = topic.lessons.findIndex((l: ILesson) => l.id === currentLesson.id);
-                if (currentIndex < topic.lessons.length - 1) {
-                  setSelectedLesson(topic.lessons[currentIndex + 1]);
+                const currentIndex = allLessons.findIndex(l => l.id === currentLesson?.id);
+                if (currentIndex < allLessons.length - 1) {
+                  setSelectedLesson(allLessons[currentIndex + 1]);
                 }
               }}
-              disabled={topic.lessons[topic.lessons.length - 1].id === currentLesson.id}
+              disabled={allLessons[allLessons.length - 1]?.id === currentLesson?.id}
               style={styles.navButton}
             >
               Следующий →
@@ -148,40 +147,18 @@ const styles = {
   lessonItemContent: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '0.25rem'
+    alignItems: 'center'
   },
   lessonTitle: {
     fontSize: '1rem',
     fontWeight: 500,
     color: '#1a1a2e'
   },
-  lessonDuration: {
-    fontSize: '0.85rem',
-    color: '#888'
-  },
-  difficultyBadge: (difficulty: string) => ({
-    padding: '2px 10px',
-    borderRadius: '12px',
-    fontSize: '0.75rem',
-    fontWeight: 'bold',
-    backgroundColor: 
-      difficulty === 'easy' ? '#4caf50' : 
-      difficulty === 'medium' ? '#ff9800' : 
-      '#f44336',
-    color: '#fff',
-    display: 'inline-block'
-  }),
   lessonContent: {
     backgroundColor: '#fff',
     borderRadius: '12px',
     padding: '2rem',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-  },
-  lessonDescription: {
-    color: '#666',
-    fontSize: '1.1rem',
-    marginBottom: '1.5rem'
   },
   lessonBody: {
     marginBottom: '2rem'

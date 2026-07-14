@@ -1,24 +1,46 @@
+// Урок - самый маленький элемент
 export interface ILesson {
   id: string;
   title: string;
-  description: string;
   content: string[]; // массив абзацев
-  duration: number; // в минутах
-  difficulty: 'easy' | 'medium' | 'hard';
-} // Тип для одного урока
-
-// Тип для темы (раздела)
-export interface Itopic{
-    id: string;
+  codeExamples?: {
     title: string;
-    icon: string;
-    description: string;
-    lessons: ILesson[];
+    code: string;
+    language: string;
+  }[];
+  quiz?: {
+    question: string;
+    options: string[];
+    correctAnswer: number;
+  }[];
 }
 
-// Тип для навигации
+// Глава - группа уроков по одной теме
+export interface IChapter {
+  id: string;
+  title: string;
+  description: string;
+  lessons: ILesson[];
+}
+
+// Раздел - основная категория (как в Metanit)
+export interface ISection {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+  chapters: IChapter[];
+}
+
+// Для навигации
 export interface INavItem {
   id: string;
+  label: string;
+  path: string;
+}
+
+// Для хлебных крошек
+export interface IBreadcrumb {
   label: string;
   path: string;
 }
