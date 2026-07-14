@@ -13,7 +13,6 @@ const Navbar: React.FC<NavbarProps> = ({ items }) => {
     <nav style={styles.nav}>
       <div style={styles.container}>
         <div style={styles.logo}>
-          <span>📚</span>
           <span style={styles.logoText}>Kilasonia</span>
         </div>
         
