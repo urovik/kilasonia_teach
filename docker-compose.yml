@@ -1,31 +1,29 @@
-# docker-compose.yml
-version: '3.8'
-
 services:
-  # Твой основной сервис с React-приложением
   kilasonia:
     build: .
     container_name: kilasonia-app
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443" # Добавляем порт 443 для HTTPS
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - certbot-etc:/etc/letsencrypt # Монтируем папку с сертификатами
-    depends_on:
-      - certbot
+      - certbot-etc:/etc/letsencrypt
 
-  # Добавляем сервис Certbot
-certbot:
-  image: certbot/certbot
-  container_name: certbot-client
-  volumes:
-    - certbot-etc:/etc/letsencrypt
-    - ./certbot/www:/var/www/certbot
-    - /var/run/docker.sock:/var/run/docker.sock
-  entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --quiet --post-hook \"docker exec kilasonia-app nginx -s reload\"; sleep 12h & wait $${!}; done;'"
-  # ✅ Вместо рестарта контейнера - просто перезагружаем nginx
+  certbot:
+    image: certbot/certbot
+    container_name: certbot-client
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: >
+      /bin/sh -c "
+        while :; do
+          certbot renew --quiet --post-hook 'docker exec kilasonia-app nginx -s reload';
+          sleep 12h & wait $$!;
+        done
+      "
 
 volumes:
   certbot-etc:
