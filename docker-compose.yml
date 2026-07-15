@@ -16,7 +16,7 @@ services:
     volumes:
       - certbot-etc:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock  # ← ЭТО ВАЖНО!
     entrypoint: >
       /bin/sh -c "
         while :; do
