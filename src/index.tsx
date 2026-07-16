@@ -57,7 +57,6 @@ document.head.appendChild(styleSheet);
 // ========== ЯНДЕКС.МЕТРИКА ==========
 const YM_ID = process.env.REACT_APP_YA_ID;
 
-
 // 1. Загружаем скрипт Метрики
 const ymScript = document.createElement('script');
 ymScript.type = 'text/javascript';

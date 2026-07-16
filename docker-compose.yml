@@ -1,6 +1,9 @@
 services:
   kilasonia:
     build: .
+    context: .
+    args:
+      - REACT_APP_YA_ID=${REACT_APP_YA_ID} 
     container_name: kilasonia-app
     restart: unless-stopped
     ports:
