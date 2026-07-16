@@ -93,7 +93,6 @@ noscript.innerHTML = `
   </div>
 `;
 document.head.appendChild(noscript);
-console.log(`📊 Яндекс.Метрика инициализирована: ${YM_ID}`);
 
 
 // ========== РЕНДЕРИНГ ==========
