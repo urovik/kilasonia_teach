@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
-// Создаем стили прямо в JS
+// ========== СТИЛИ ==========
 const styles = `
   * {
     margin: 0;
@@ -21,7 +21,6 @@ const styles = `
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
   }
 
-  /* Стили для скролла */
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -41,27 +40,9 @@ const styles = `
     font-family: inherit;
   }
 
-  /* Анимации */
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .fade-in {
@@ -69,11 +50,53 @@ const styles = `
   }
 `;
 
-// Вставляем стили в head
 const styleSheet = document.createElement('style');
 styleSheet.textContent = styles;
 document.head.appendChild(styleSheet);
 
+// ========== ЯНДЕКС.МЕТРИКА ==========
+const YM_ID = process.env.REACT_APP_YA_ID;
+
+
+// 1. Загружаем скрипт Метрики
+const ymScript = document.createElement('script');
+ymScript.type = 'text/javascript';
+ymScript.textContent = `
+  (function(m,e,t,r,i,k,a){
+    m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for (var j = 0; j < document.scripts.length; j++) {
+      if (document.scripts[j].src === r) { return; }
+    }
+    k=e.createElement(t), a=e.getElementsByTagName(t)[0],
+    k.async=1, k.src=r, a.parentNode.insertBefore(k,a);
+  })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}', 'ym');
+  ym(${YM_ID}, 'init', {
+    ssr: true,
+    webvisor: true,
+    clickmap: true,
+    ecommerce: "dataLayer",
+    referrer: document.referrer,
+    url: location.href,
+    accurateTrackBounce: true,
+    trackLinks: true
+  });
+`;
+document.head.appendChild(ymScript);
+// 2. Добавляем noscript для пользователей без JS
+const noscript = document.createElement('noscript');
+noscript.innerHTML = `
+  <div>
+    <img src="https://mc.yandex.ru/watch/${YM_ID}" 
+         style="position:absolute; left:-9999px;" 
+         alt="" />
+  </div>
+`;
+document.head.appendChild(noscript);
+console.log(`📊 Яндекс.Метрика инициализирована: ${YM_ID}`);
+
+
+// ========== РЕНДЕРИНГ ==========
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
