@@ -55,41 +55,44 @@ styleSheet.textContent = styles;
 document.head.appendChild(styleSheet);
 
 // ========== ЯНДЕКС.МЕТРИКА ==========
-const YM_ID = process.env.REACT_APP_YA_ID;
+const YM_ID = process.env.REACT_APP_YA_ID || 110792885;
 
 // 1. Загружаем скрипт Метрики
 const ymScript = document.createElement('script');
 ymScript.type = 'text/javascript';
 ymScript.textContent = `
-  (function(m,e,t,r,i,k,a){
-    m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for (var j = 0; j < document.scripts.length; j++) {
-      if (document.scripts[j].src === r) { return; }
-    }
-    k=e.createElement(t), a=e.getElementsByTagName(t)[0],
-    k.async=1, k.src=r, a.parentNode.insertBefore(k,a);
-  })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}', 'ym');
-  ym(${YM_ID}, 'init', {
-    ssr: true,
-    webvisor: true,
-    clickmap: true,
-    ecommerce: "dataLayer",
-    referrer: document.referrer,
-    url: location.href,
-    accurateTrackBounce: true,
-    trackLinks: true
-  });
+(function(m,e,t,r,i,k,a){
+  m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();
+  for (var j = 0; j < document.scripts.length; j++) {
+    if (document.scripts[j].src === r) { return; }
+  }
+  k=e.createElement(t);
+  a=e.getElementsByTagName(t)[0];
+  k.async=1;
+  k.src=r;
+  a.parentNode.insertBefore(k,a);
+})(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=${YM_ID}', 'ym');
+
+ym(${YM_ID}, 'init', {
+  ssr: true,
+  webvisor: true,
+  clickmap: true,
+  ecommerce: "dataLayer",
+  referrer: document.referrer,
+  url: location.href,
+  accurateTrackBounce: true,
+  trackLinks: true
+});
 `;
 document.head.appendChild(ymScript);
+
 // 2. Добавляем noscript для пользователей без JS
 const noscript = document.createElement('noscript');
 noscript.innerHTML = `
-  <div>
-    <img src="https://mc.yandex.ru/watch/${YM_ID}" 
-         style="position:absolute; left:-9999px;" 
-         alt="" />
-  </div>
+<div>
+  <img src="https://mc.yandex.ru/watch/${YM_ID}" style="position:absolute; left:-9999px;" alt="" />
+</div>
 `;
 document.head.appendChild(noscript);
 
