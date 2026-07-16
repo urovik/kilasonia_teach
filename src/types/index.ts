@@ -1,21 +1,25 @@
-// Урок - самый маленький элемент
+// Тип для блока контента (может быть текстом, заголовком, списком или кодом)
+export interface IContentBlock {
+  type: 'text' | 'code' | 'heading' | 'list';
+  content: string | string[] | ICodeExample;
+}
+
+// Тип для примера кода
+export interface ICodeExample {
+  title?: string;
+  language: string;
+  code: string;
+}
+
+// Тип для урока
 export interface ILesson {
   id: string;
   title: string;
-  content: string[]; // массив абзацев
-  codeExamples?: {
-    title: string;
-    code: string;
-    language: string;
-  }[];
-  quiz?: {
-    question: string;
-    options: string[];
-    correctAnswer: number;
-  }[];
+  description?: string;
+  content: IContentBlock[];
 }
 
-// Глава - группа уроков по одной теме
+// Тип для главы
 export interface IChapter {
   id: string;
   title: string;
@@ -23,7 +27,7 @@ export interface IChapter {
   lessons: ILesson[];
 }
 
-// Раздел - основная категория (как в Metanit)
+// Тип для раздела
 export interface ISection {
   id: string;
   title: string;
@@ -32,14 +36,14 @@ export interface ISection {
   chapters: IChapter[];
 }
 
-// Для навигации
+// Тип для навигации
 export interface INavItem {
   id: string;
   label: string;
   path: string;
 }
 
-// Для хлебных крошек
+// Тип для хлебных крошек
 export interface IBreadcrumb {
   label: string;
   path: string;
