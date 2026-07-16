@@ -1,9 +1,6 @@
 services:
   kilasonia:
     build: .
-    context: .
-    args:
-      - REACT_APP_YA_ID=${REACT_APP_YA_ID} 
     container_name: kilasonia-app
     restart: unless-stopped
     ports:
@@ -12,6 +9,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - certbot-etc:/etc/letsencrypt  # ← ЭТО ДОЛЖНО БЫТЬ!
+    environment:
+      - REACT_APP_YA_ID=${REACT_APP_YA_ID} 
     depends_on:
       - certbot
 
