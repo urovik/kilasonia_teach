@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
       <div style={styles.contactSection}>
         <h2 style={styles.contactTitle}>📬 Связаться со мной</h2>
         <div style={styles.contactGrid}>
-          <a href="https://t.me/your_channel" target="_blank" rel="noopener noreferrer" style={{ ...styles.contactCard, ...styles.contactCardTelegram }}>
+          <a href="https://t.me/Kilaaaaaakod" target="_blank" rel="noopener noreferrer" style={{ ...styles.contactCard, ...styles.contactCardTelegram }}>
             <span style={styles.contactIcon}>✈️</span>
             <div>
               <h3 style={styles.contactName}>Telegram</h3>
@@ -89,7 +89,7 @@ const HomePage: React.FC = () => {
             <span style={styles.contactArrow}>→</span>
           </a>
 
-          <a href="https://youtube.com/your_channel" target="_blank" rel="noopener noreferrer" style={{ ...styles.contactCard, ...styles.contactCardYouTube }}>
+          <a href="https://www.youtube.com/@urovik" target="_blank" rel="noopener noreferrer" style={{ ...styles.contactCard, ...styles.contactCardYouTube }}>
             <span style={styles.contactIcon}>▶️</span>
             <div>
               <h3 style={styles.contactName}>YouTube</h3>

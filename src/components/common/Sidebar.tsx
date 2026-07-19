@@ -8,12 +8,12 @@ const Sidebar: React.FC = () => {
       <div style={styles.section}>
         <h3 style={styles.title}>🌐 Связаться со мной</h3>
         <div style={styles.socialLinks}>
-          <a href="https://t.me/your_channel" target="_blank" rel="noopener noreferrer" style={{ ...styles.socialLink, ...styles.telegram }}>
+          <a href="https://t.me/Kilaaaaaakod" target="_blank" rel="noopener noreferrer" style={{ ...styles.socialLink, ...styles.telegram }}>
             <span style={styles.icon}>✈️</span>
             <span>Telegram</span>
             <span style={styles.linkArrow}>→</span>
           </a>
-          <a href="https://youtube.com/your_channel" target="_blank" rel="noopener noreferrer" style={{ ...styles.socialLink, ...styles.youtube }}>
+          <a href="https://www.youtube.com/@urovik" target="_blank" rel="noopener noreferrer" style={{ ...styles.socialLink, ...styles.youtube }}>
             <span style={styles.icon}>▶️</span>
             <span>YouTube</span>
             <span style={styles.linkArrow}>→</span>
