@@ -11,26 +11,40 @@ const MainLayout: React.FC = () => {
       <Navbar items={navItems} />
       <main style={styles.main}>
         <div style={styles.container}>
-          <Outlet /> {/* Здесь будут рендериться дочерние страницы */}
+          <Outlet />
         </div>
       </main>
     </div>
   );
 };
 
-const styles = {
+const styles: any = {
   layout: {
     minHeight: '100vh',
-    backgroundColor: '#f5f7fa'
+    backgroundColor: 'var(--bg, #f0f4f8)',
   },
   main: {
-    padding: '2rem 0'
+    padding: '24px 0',
   },
   container: {
     maxWidth: '1200px',
     margin: '0 auto',
-    padding: '0 20px'
-  }
+    padding: '0 16px',
+  },
 };
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+  @media (max-width: 768px) {
+    .main { padding: 16px 0 !important; }
+    .container { padding: 0 12px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .main { padding: 12px 0 !important; }
+    .container { padding: 0 10px !important; }
+  }
+`;
+document.head.appendChild(styleSheet);
 
 export default MainLayout;

@@ -2,16 +2,36 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { sectionsData } from '../../data/topics';
 import { ISection } from '../../types';
+import Achievements from '../common/Achievements';
 
-// Импорт QR-кода (если в assets)
 const qrCode = require('../../assets/qr.jpeg');
 
+type TabId = 'all' | 'C' | 'Python' | 'JavaScript';
+
+interface Tab {
+  id: TabId;
+  label: string;
+  icon: string;
+}
+
 const HomePage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabId>('all');
   const [showQR, setShowQR] = useState(false);
   const lessonsRef = useRef<HTMLDivElement>(null);
 
+  const tabs: Tab[] = [
+    { id: 'all', label: 'Все', icon: '📚' },
+    { id: 'C', label: 'C', icon: '⚙️' },
+    { id: 'Python', label: 'Python', icon: '🐍' },
+    { id: 'JavaScript', label: 'JavaScript', icon: '🌐' },
+  ];
+
+  const filteredSections = activeTab === 'all'
+    ? sectionsData
+    : sectionsData.filter(s => s.id === activeTab);
+
   const scrollToLessons = () => {
-    lessonsRef.current?.scrollIntoView({ 
+    lessonsRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     });
@@ -41,24 +61,43 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Секция с уроками - сюда будем скроллить */}
+      {/* Достижения */}
+      <div style={styles.achievementsWrapper}>
+        <Achievements />
+      </div>
+
+      {/* Секция с уроками */}
       <div ref={lessonsRef} style={styles.lessonsSection}>
         <h2 style={styles.sectionTitle}>📚 Доступные разделы</h2>
+
+        <div style={styles.tabsContainer}>
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              style={{
+                ...styles.tab,
+                ...(activeTab === tab.id ? styles.tabActive : {})
+              }}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span style={styles.tabIcon}>{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         <div style={styles.grid}>
-          {sectionsData.map((section: ISection, index: number) => {
+          {filteredSections.map((section: ISection) => {
             const totalLessons = section.chapters.reduce(
-              (acc, chapter) => acc + chapter.lessons.length,
+              (acc, ch) => acc + ch.lessons.length,
               0
             );
 
-            const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a'];
-            const color = colors[index % colors.length];
-
             return (
-              <Link 
-                key={section.id} 
-                to={`/section/${section.id}`} 
-                style={{ ...styles.card, borderTop: `4px solid ${color}` }}
+              <Link
+                key={section.id}
+                to={`/section/${section.id}`}
+                style={styles.card}
               >
                 <div style={styles.cardIcon}>{section.icon}</div>
                 <h2 style={styles.cardTitle}>{section.title}</h2>
@@ -74,13 +113,24 @@ const HomePage: React.FC = () => {
             );
           })}
         </div>
+
+        {filteredSections.length === 0 && (
+          <div style={styles.emptyState}>
+            <p>В этом разделе пока нет уроков. Скоро добавятся!</p>
+          </div>
+        )}
       </div>
 
       {/* Секция контактов */}
       <div style={styles.contactSection}>
         <h2 style={styles.contactTitle}>📬 Связаться со мной</h2>
         <div style={styles.contactGrid}>
-          <a href="https://t.me/Kilaaaaaakod" target="_blank" rel="noopener noreferrer" style={{ ...styles.contactCard, ...styles.contactCardTelegram }}>
+          <a
+            href="https://t.me/Kilaaaaaakod"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...styles.contactCard, ...styles.contactCardTelegram }}
+          >
             <span style={styles.contactIcon}>✈️</span>
             <div>
               <h3 style={styles.contactName}>Telegram</h3>
@@ -89,7 +139,12 @@ const HomePage: React.FC = () => {
             <span style={styles.contactArrow}>→</span>
           </a>
 
-          <a href="https://www.youtube.com/@urovik" target="_blank" rel="noopener noreferrer" style={{ ...styles.contactCard, ...styles.contactCardYouTube }}>
+          <a
+            href="https://www.youtube.com/@urovik"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...styles.contactCard, ...styles.contactCardYouTube }}
+          >
             <span style={styles.contactIcon}>▶️</span>
             <div>
               <h3 style={styles.contactName}>YouTube</h3>
@@ -98,7 +153,10 @@ const HomePage: React.FC = () => {
             <span style={styles.contactArrow}>→</span>
           </a>
 
-          <div style={{ ...styles.contactCard, ...styles.contactCardQR }} onClick={() => setShowQR(!showQR)}>
+          <div
+            style={{ ...styles.contactCard, ...styles.contactCardQR }}
+            onClick={() => setShowQR(!showQR)}
+          >
             <span style={styles.contactIcon}>❤️</span>
             <div>
               <h3 style={styles.contactName}>Поддержать</h3>
@@ -113,7 +171,7 @@ const HomePage: React.FC = () => {
         {showQR && (
           <div style={styles.qrContainer}>
             <p style={styles.qrText}>Отсканируй QR-код для поддержки проекта 🙌</p>
-            <img src={require('../../assets/qr.jpeg')} alt="QR-код" style={styles.qrImage} />
+            <img src={qrCode} alt="QR-код" style={styles.qrImage} />
           </div>
         )}
       </div>
@@ -129,10 +187,10 @@ const styles: any = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-    borderRadius: '16px',
+    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+    borderRadius: 'var(--radius-lg, 12px)',
     padding: '48px 40px',
-    marginBottom: '48px',
+    marginBottom: '32px',
     position: 'relative' as const,
     overflow: 'hidden',
   },
@@ -143,12 +201,13 @@ const styles: any = {
   heroBadge: {
     display: 'inline-block',
     padding: '4px 16px',
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    background: 'var(--primary, #3b82f6)',
     borderRadius: '20px',
-    fontSize: '0.8rem',
+    fontSize: '0.75rem',
     fontWeight: 600,
     color: '#fff',
     marginBottom: '16px',
+    letterSpacing: '0.5px',
   },
   heroTitle: {
     fontSize: '2.8rem',
@@ -157,32 +216,32 @@ const styles: any = {
     marginBottom: '16px',
   },
   heroHighlight: {
-    background: 'linear-gradient(45deg, #667eea, #f093fb)',
+    background: 'linear-gradient(135deg, #60a5fa, #a78bfa)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
   heroSubtitle: {
-    fontSize: '1.1rem',
+    fontSize: '1.05rem',
     color: 'rgba(255,255,255,0.7)',
     lineHeight: 1.6,
     marginBottom: '24px',
+    maxWidth: '500px',
   },
   heroButton: {
     display: 'inline-block',
-    padding: '12px 32px',
-    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+    padding: '10px 28px',
+    background: 'var(--primary, #3b82f6)',
     color: '#fff',
-    borderRadius: '30px',
+    borderRadius: 'var(--radius, 8px)',
     border: 'none',
-    fontSize: '1rem',
-    fontWeight: 600,
+    fontSize: '0.95rem',
+    fontWeight: 500,
     cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+    transition: 'all 0.2s ease',
   },
   heroDecoration: {
     fontSize: '8rem',
-    opacity: 0.1,
+    opacity: 0.06,
     position: 'absolute' as const,
     right: 0,
     top: '50%',
@@ -192,46 +251,78 @@ const styles: any = {
   heroEmoji: {
     fontSize: '12rem',
   },
+  achievementsWrapper: {
+    marginBottom: '32px',
+  },
   lessonsSection: {
     marginBottom: '48px',
   },
   sectionTitle: {
-    fontSize: '2rem',
-    color: '#1a1a2e',
-    marginBottom: '24px',
+    fontSize: '1.8rem',
+    color: 'var(--text, #0f172a)',
+    marginBottom: '20px',
     textAlign: 'center' as const,
+  },
+  tabsContainer: {
+    display: 'flex',
+    gap: '8px',
+    justifyContent: 'center',
+    marginBottom: '32px',
+    flexWrap: 'wrap' as const,
+  },
+  tab: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '8px 20px',
+    backgroundColor: 'var(--bg-card, #ffffff)',
+    border: '1px solid var(--border, #e2e8f0)',
+    borderRadius: 'var(--radius, 8px)',
+    fontSize: '0.9rem',
+    fontWeight: 500,
+    color: 'var(--text-muted, #64748b)',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+  tabActive: {
+    backgroundColor: 'var(--primary, #3b82f6)',
+    color: '#fff',
+    borderColor: 'var(--primary, #3b82f6)',
+  },
+  tabIcon: {
+    fontSize: '1rem',
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: '24px',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '20px',
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: '16px',
-    padding: '28px 24px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+    backgroundColor: 'var(--bg-card, #ffffff)',
+    borderRadius: 'var(--radius, 8px)',
+    padding: '24px 20px',
+    boxShadow: 'var(--shadow-card)',
     textDecoration: 'none',
     color: 'inherit',
-    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    transition: 'all 0.2s ease',
     display: 'block',
-    position: 'relative' as const,
-    overflow: 'hidden',
+    border: '1px solid var(--border, #e2e8f0)',
   },
   cardIcon: {
-    fontSize: '3rem',
+    fontSize: '2.5rem',
     marginBottom: '12px',
   },
   cardTitle: {
-    fontSize: '1.3rem',
-    color: '#1a1a2e',
-    marginBottom: '8px',
+    fontSize: '1.2rem',
+    color: 'var(--text, #0f172a)',
+    marginBottom: '6px',
+    fontWeight: 600,
   },
   cardDescription: {
-    color: '#666',
-    lineHeight: '1.6',
+    color: 'var(--text-muted, #64748b)',
+    lineHeight: '1.5',
     marginBottom: '16px',
-    fontSize: '0.95rem',
+    fontSize: '0.9rem',
   },
   cardFooter: {
     display: 'flex',
@@ -243,8 +334,8 @@ const styles: any = {
   cardStats: {
     display: 'flex',
     gap: '12px',
-    fontSize: '0.85rem',
-    color: '#888',
+    fontSize: '0.8rem',
+    color: 'var(--text-light, #94a3b8)',
   },
   cardStat: {
     display: 'flex',
@@ -252,120 +343,123 @@ const styles: any = {
     gap: '4px',
   },
   cardArrow: {
-    fontSize: '1.5rem',
-    color: '#667eea',
-    transition: 'transform 0.3s ease',
+    fontSize: '1.2rem',
+    color: 'var(--primary, #3b82f6)',
+    transition: 'transform 0.2s ease',
+  },
+  emptyState: {
+    textAlign: 'center' as const,
+    padding: '40px 20px',
+    color: 'var(--text-muted, #64748b)',
+    backgroundColor: 'var(--bg-card, #ffffff)',
+    borderRadius: 'var(--radius, 8px)',
+    border: '1px solid var(--border, #e2e8f0)',
   },
   contactSection: {
-    backgroundColor: '#fff',
-    borderRadius: '16px',
-    padding: '32px',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+    backgroundColor: 'var(--bg-card, #ffffff)',
+    borderRadius: 'var(--radius, 8px)',
+    padding: '28px',
+    border: '1px solid var(--border, #e2e8f0)',
   },
   contactTitle: {
-    fontSize: '1.8rem',
+    fontSize: '1.5rem',
     textAlign: 'center' as const,
-    marginBottom: '24px',
-    color: '#1a1a2e',
+    marginBottom: '20px',
+    color: 'var(--text, #0f172a)',
   },
   contactGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '12px',
   },
   contactCard: {
     display: 'flex',
     alignItems: 'center',
-    gap: '14px',
-    padding: '18px 20px',
-    borderRadius: '12px',
+    gap: '12px',
+    padding: '14px 16px',
+    borderRadius: 'var(--radius, 8px)',
     textDecoration: 'none',
-    color: '#333',
+    color: 'var(--text, #0f172a)',
     cursor: 'pointer',
-    transition: 'all 0.3s ease',
+    transition: 'all 0.2s ease',
+    border: '1px solid var(--border, #e2e8f0)',
+    backgroundColor: 'var(--bg, #f8fafc)',
   },
   contactCardTelegram: {
-    backgroundColor: '#f0f4ff',
-    border: '2px solid #e8ecff',
+    borderColor: '#e2e8f0',
   },
   contactCardYouTube: {
-    backgroundColor: '#fff5f5',
-    border: '2px solid #ffd4d4',
+    borderColor: '#e2e8f0',
   },
   contactCardQR: {
-    background: 'linear-gradient(135deg, #fff5f5, #f0f4ff)',
-    border: '2px solid #e8ecff',
+    borderColor: '#e2e8f0',
   },
   contactIcon: {
-    fontSize: '2rem',
+    fontSize: '1.6rem',
   },
   contactName: {
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     fontWeight: 600,
     margin: 0,
   },
   contactDesc: {
-    fontSize: '0.85rem',
-    color: '#888',
+    fontSize: '0.8rem',
+    color: 'var(--text-muted, #64748b)',
     margin: 0,
   },
   contactArrow: {
     marginLeft: 'auto',
-    fontSize: '1.2rem',
-    color: '#667eea',
+    fontSize: '1rem',
+    color: 'var(--primary, #3b82f6)',
   },
   qrContainer: {
-    marginTop: '20px',
-    padding: '24px',
-    background: 'linear-gradient(135deg, #fafafa, #f5f7fa)',
-    borderRadius: '12px',
+    marginTop: '16px',
+    padding: '20px',
+    backgroundColor: 'var(--bg, #f8fafc)',
+    borderRadius: 'var(--radius, 8px)',
     textAlign: 'center' as const,
     animation: 'fadeIn 0.3s ease',
   },
   qrText: {
-    fontSize: '1rem',
-    color: '#555',
-    marginBottom: '16px',
+    fontSize: '0.95rem',
+    color: 'var(--text-muted, #64748b)',
+    marginBottom: '12px',
   },
   qrImage: {
-    width: '180px',
-    height: '180px',
-    borderRadius: '12px',
-    border: '3px solid #fff',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+    width: '160px',
+    height: '160px',
+    borderRadius: 'var(--radius, 8px)',
+    border: '1px solid var(--border, #e2e8f0)',
     objectFit: 'contain' as const,
+    margin: '0 auto',
   },
 };
 
-// CSS для анимаций
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `
   .hero-button:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+    background: var(--primary-hover, #2563eb) !important;
+    transform: translateY(-2px);
   }
-  
-  .hero-button:active {
-    transform: scale(0.98);
-  }
-  
   .card:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary, #3b82f6);
   }
-  
   .card:hover .card-arrow {
-    transform: translateX(6px);
+    transform: translateX(4px);
   }
-  
   .contact-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
   }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .tab:hover:not(.tab-active) {
+    background: var(--bg-hover, #f1f5f9);
+  }
+
+  @media (max-width: 1024px) {
+    .hero { padding: 40px 32px !important; }
+    .hero-title { font-size: 2.4rem !important; }
   }
 
   @media (max-width: 768px) {
@@ -373,62 +467,42 @@ styleSheet.textContent = `
       padding: 32px 24px !important;
       flex-direction: column !important;
       text-align: center !important;
+      border-radius: var(--radius, 8px) !important;
     }
-    .hero-title {
-      font-size: 2rem !important;
-    }
-    .hero-subtitle {
-      font-size: 1rem !important;
-    }
-    .hero-decoration {
-      display: none !important;
-    }
-    .grid {
-      grid-template-columns: 1fr !important;
-    }
-    .contact-grid {
-      grid-template-columns: 1fr !important;
-    }
-    .contact-section {
-      padding: 20px !important;
-    }
-    .qr-image {
-      width: 140px !important;
-      height: 140px !important;
-    }
+    .hero-title { font-size: 2rem !important; }
+    .hero-subtitle { font-size: 0.95rem !important; max-width: 100% !important; }
+    .hero-decoration { display: none !important; }
+    .grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+    .contact-grid { grid-template-columns: 1fr !important; }
+    .contact-section { padding: 20px !important; }
+    .tabs-container { gap: 6px !important; }
+    .tab { padding: 6px 14px !important; font-size: 0.8rem !important; }
+    .section-title { font-size: 1.5rem !important; }
+    .qr-image { width: 140px !important; height: 140px !important; }
   }
 
   @media (max-width: 480px) {
-    .hero {
-      padding: 24px 16px !important;
-      border-radius: 12px !important;
-    }
-    .hero-title {
-      font-size: 1.5rem !important;
-    }
-    .hero-badge {
-      font-size: 0.7rem !important;
-    }
-    .hero-button {
-      padding: 10px 24px !important;
-      font-size: 0.9rem !important;
-    }
-    .card {
-      padding: 20px 16px !important;
-    }
-    .card-title {
-      font-size: 1.1rem !important;
-    }
-    .contact-card {
-      padding: 14px 16px !important;
-    }
-    .qr-image {
-      width: 120px !important;
-      height: 120px !important;
-    }
-    .contact-title {
-      font-size: 1.4rem !important;
-    }
+    .container { padding: 12px 0 !important; }
+    .hero { padding: 24px 16px !important; }
+    .hero-title { font-size: 1.5rem !important; }
+    .hero-button { padding: 8px 20px !important; font-size: 0.85rem !important; }
+    .card { padding: 18px 16px !important; }
+    .card-title { font-size: 1.05rem !important; }
+    .contact-card { padding: 12px 14px !important; }
+    .qr-image { width: 120px !important; height: 120px !important; }
+    .contact-title { font-size: 1.3rem !important; }
+    .section-title { font-size: 1.3rem !important; }
+    .tabs-container { gap: 4px !important; }
+    .tab { padding: 4px 10px !important; font-size: 0.75rem !important; }
+    .tab-icon { font-size: 0.85rem !important; }
+  }
+
+  @media (max-width: 360px) {
+    .hero { padding: 16px 12px !important; }
+    .hero-title { font-size: 1.3rem !important; }
+    .card-icon { font-size: 2rem !important; }
+    .contact-icon { font-size: 1.4rem !important; }
+    .tab { padding: 4px 8px !important; font-size: 0.7rem !important; }
   }
 `;
 document.head.appendChild(styleSheet);

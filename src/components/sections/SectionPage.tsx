@@ -17,11 +17,11 @@ const SectionPage: React.FC = () => {
   ];
 
   return (
-    <div>
+    <div style={styles.container}>
       <Breadcrumbs items={breadcrumbs} />
       
-      <div style={styles.container}>
-        <div style={styles.content}>
+      <div style={styles.content}>
+        <div style={styles.main}>
           <div style={styles.header}>
             <h1 style={styles.title}>{section.icon} {section.title}</h1>
             <p style={styles.description}>{section.description}</p>
@@ -60,71 +60,68 @@ const SectionPage: React.FC = () => {
   );
 };
 
-const styles = {
-  error: {
-    padding: '2rem',
-    textAlign: 'center' as const,
-    fontSize: '1.2rem',
-    color: '#f44336'
-  },
+const styles: any = {
   container: {
-    display: 'grid' as const,
-    gridTemplateColumns: '1fr 220px',
-    gap: '2rem'
+    padding: '20px 0',
   },
   content: {
-    // Основной контент
+    display: 'grid',
+    gridTemplateColumns: '1fr 220px',
+    gap: '24px',
+  },
+  main: {
+    minWidth: 0,
   },
   header: {
-    marginBottom: '2rem'
+    marginBottom: '32px',
   },
   title: {
     fontSize: '2.5rem',
-    color: '#1a1a2e',
-    marginBottom: '0.5rem'
+    color: 'var(--text, #2c3e50)',
+    marginBottom: '8px',
   },
   description: {
     fontSize: '1.1rem',
-    color: '#666'
+    color: 'var(--text-muted, #6b7a8a)',
   },
   chapters: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '2rem'
+    gap: '24px',
   },
   chapter: {
-    backgroundColor: '#fff',
-    borderRadius: '12px',
-    padding: '2rem',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    backgroundColor: 'var(--bg-card, #ffffff)',
+    borderRadius: 'var(--radius, 10px)',
+    padding: '24px',
+    boxShadow: '0 1px 3px var(--shadow, rgba(44,62,80,0.08))',
   },
   chapterTitle: {
     fontSize: '1.5rem',
-    color: '#1a1a2e',
-    marginBottom: '0.5rem'
+    color: 'var(--text, #2c3e50)',
+    marginBottom: '8px',
   },
   chapterDescription: {
-    color: '#666',
-    marginBottom: '1.5rem'
+    color: 'var(--text-muted, #6b7a8a)',
+    marginBottom: '16px',
   },
   lessonList: {
     listStyle: 'none',
     padding: 0,
-    margin: 0
+    margin: 0,
   },
   lessonItem: {
-    padding: '0.5rem 0',
-    borderBottom: '1px solid #f0f0f0'
+    padding: '8px 0',
+    borderBottom: '1px solid var(--border, #dce4ec)',
   },
   lessonLink: {
     display: 'flex',
     alignItems: 'center',
-    gap: '1rem',
-    color: '#333',
+    gap: '12px',
+    color: 'var(--text, #2c3e50)',
     textDecoration: 'none',
-    padding: '0.5rem',
-    borderRadius: '6px',
-    transition: 'background 0.2s ease'
+    padding: '8px 12px',
+    borderRadius: 'var(--radius-sm, 6px)',
+    transition: 'background 0.2s ease',
   },
   lessonNumber: {
     display: 'inline-flex',
@@ -132,12 +129,60 @@ const styles = {
     justifyContent: 'center',
     width: '28px',
     height: '28px',
-    backgroundColor: '#667eea',
+    backgroundColor: 'var(--primary, #3498db)',
     color: '#fff',
     borderRadius: '50%',
     fontSize: '0.8rem',
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+    flexShrink: 0,
+  },
+  error: {
+    padding: '40px',
+    textAlign: 'center' as const,
+    fontSize: '1.2rem',
+    color: 'var(--error, #e74c3c)',
+  },
 };
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+  .lesson-link:hover {
+    background: var(--bg-hover, #e8ecf0);
+  }
+
+  @media (max-width: 1024px) {
+    .content {
+      grid-template-columns: 1fr 200px !important;
+      gap: 16px !important;
+    }
+    .title { font-size: 2.2rem !important; }
+    .chapter { padding: 20px !important; }
+  }
+
+  @media (max-width: 768px) {
+    .content {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+    }
+    .title { font-size: 1.8rem !important; }
+    .description { font-size: 1rem !important; }
+    .chapter { padding: 16px !important; }
+    .chapter-title { font-size: 1.3rem !important; }
+    .header { margin-bottom: 24px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 12px 0 !important; }
+    .title { font-size: 1.5rem !important; }
+    .description { font-size: 0.9rem !important; }
+    .chapter { padding: 12px !important; border-radius: var(--radius-sm, 6px) !important; }
+    .chapter-title { font-size: 1.1rem !important; }
+    .lesson-link { font-size: 0.9rem !important; padding: 6px 8px !important; }
+    .lesson-number { width: 24px !important; height: 24px !important; font-size: 0.7rem !important; }
+    .lesson-item { padding: 4px 0 !important; }
+  }
+`;
+document.head.appendChild(styleSheet);
 
 export default SectionPage;

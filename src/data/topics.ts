@@ -844,8 +844,256 @@ export const sectionsData: ISection[] = [
         ]
       }
     ]
+  },
+  {
+    id: 'Python',
+    title: 'Python',
+    icon: '🐍',
+    description: 'Освой Python — язык для AI, data science и веба',
+    chapters: [
+      {
+        id: 'python-basics',
+        title: 'Основы Python',
+        description: 'Первые шаги в Python',
+        lessons: [
+          {
+            id: 'python-intro',
+            title: 'Введение в Python',
+            description: 'Что такое Python и почему он популярен',
+            content: [
+              {
+                type: 'text',
+                content: 'Python — это высокоуровневый язык программирования, созданный Гвидо ван Россумом в 1991 году. Его главная философия — читаемость кода и простота.'
+              },
+              {
+                type: 'text',
+                content: 'Python широко используется в веб-разработке, анализе данных, искусственном интеллекте, автоматизации и научных вычислениях.'
+              },
+              {
+                type: 'heading',
+                content: 'Первая программа'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Hello, World!',
+                  language: 'python',
+                  code: 'print("Hello, World!")'
+                }
+              },
+              {
+                type: 'text',
+                content: 'В Python нет точек с запятой и фигурных скобок. Блоки кода выделяются отступами (обычно 4 пробела).'
+              }
+            ]
+          },
+          {
+            id: 'python-variables',
+            title: 'Переменные и типы данных',
+            description: 'Как хранить данные',
+            content: [
+              {
+                type: 'text',
+                content: 'В Python не нужно объявлять тип переменной — интерпретатор определяет его автоматически.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Переменные',
+                  language: 'python',
+                  code: `name = "Alice"      # строка\nage = 25            # целое число\nprice = 19.99       # число с плавающей точкой\nis_active = True    # булево значение (True/False)`
+                }
+              },
+              {
+                type: 'heading',
+                content: 'Основные типы данных'
+              },
+              {
+                type: 'list',
+                content: [
+                  'int — целые числа (10, -5, 0)',
+                  'float — числа с плавающей точкой (3.14, -2.5)',
+                  'str — строки ("Hello", "Python")',
+                  'bool — True или False',
+                  'list — списки ([1, 2, 3])',
+                  'dict — словари ({"name": "Alice"})'
+                ]
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Проверка типа',
+                  language: 'python',
+                  code: `name = "Alice"\nprint(type(name))  # <class 'str'>\n\nage = 25\nprint(type(age))   # <class 'int'>`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-functions',
+            title: 'Функции',
+            description: 'Создаём свои функции',
+            content: [
+              {
+                type: 'text',
+                content: 'Функции — это блоки кода, которые можно вызывать многократно. Они помогают организовать код и избежать повторений.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Функции',
+                  language: 'python',
+                  code: `def greet(name):\n    return f"Привет, {name}!"\n\nprint(greet("Alice"))  # Привет, Alice!\n\n# Функция без return\ndef say_hello():\n    print("Hello!")\n\nsay_hello()`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-conditions',
+            title: 'Условные операторы',
+            description: 'if, elif, else',
+            content: [
+              {
+                type: 'text',
+                content: 'Условные операторы позволяют выполнять разные блоки кода в зависимости от условий.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Условия',
+                  language: 'python',
+                  code: `age = 18\n\nif age >= 18:\n    print("Ты совершеннолетний")\nelif age > 0:\n    print("Ты ребенок")\nelse:\n    print("Неверный возраст")\n\n# Тернарный оператор\nresult = "Взрослый" if age >= 18 else "Ребенок"`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-loops',
+            title: 'Циклы',
+            description: 'for и while',
+            content: [
+              {
+                type: 'text',
+                content: 'Циклы позволяют выполнять код многократно. В Python есть два основных типа циклов: for и while.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Циклы',
+                  language: 'python',
+                  code: `# Цикл for по списку\nfruits = ["яблоко", "банан", "апельсин"]\nfor fruit in fruits:\n    print(fruit)\n\n# Цикл с range\nfor i in range(5):\n    print(i)  # 0, 1, 2, 3, 4\n\n# Цикл while\ncount = 0\nwhile count < 5:\n    print(count)\n    count += 1`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-lists',
+            title: 'Списки',
+            description: 'Одна из важнейших структур',
+            content: [
+              {
+                type: 'text',
+                content: 'Списки — это упорядоченные изменяемые коллекции элементов. Они могут содержать элементы разных типов.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Работа со списками',
+                  language: 'python',
+                  code: `numbers = [1, 2, 3, 4, 5]\n\n# Доступ к элементам\nprint(numbers[0])   # 1\nprint(numbers[-1])  # 5\nprint(numbers[1:3]) # [2, 3]\n\n# Добавление\nnumbers.append(6)          # [1,2,3,4,5,6]\nnumbers.insert(0, 0)       # [0,1,2,3,4,5,6]\n\n# Удаление\nnumbers.remove(3)          # [0,1,2,4,5,6]\nlast = numbers.pop()       # удаляет и возвращает последний\n\n# Перебор\nfor num in numbers:\n    print(num)`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-dicts',
+            title: 'Словари',
+            description: 'Хранение данных по ключам',
+            content: [
+              {
+                type: 'text',
+                content: 'Словари хранят пары "ключ-значение". Это как телефонная книга, где по имени можно найти номер.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Словари',
+                  language: 'python',
+                  code: `person = {\n    "name": "Alice",\n    "age": 25,\n    "city": "Moscow",\n    "hobbies": ["reading", "coding"]\n}\n\n# Доступ по ключу\nprint(person["name"])      # Alice\nprint(person.get("job", "Не указано"))  # Не указано\n\n# Добавление/изменение\nperson["job"] = "Developer"\n\n# Перебор\nfor key, value in person.items():\n    print(f"{key}: {value}")`
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'python-advanced',
+        title: 'Продвинутый Python',
+        description: 'Идём дальше после основ',
+        lessons: [
+          {
+            id: 'python-files',
+            title: 'Работа с файлами',
+            description: 'Чтение и запись файлов',
+            content: [
+              {
+                type: 'text',
+                content: 'Python предоставляет простые инструменты для работы с файлами. Контекстный менеджер `with` автоматически закрывает файл.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Файлы',
+                  language: 'python',
+                  code: `# Запись в файл\nwith open("file.txt", "w", encoding="utf-8") as f:\n    f.write("Привет, мир!\\n")\n    f.write("Вторая строка")\n\n# Чтение файла\nwith open("file.txt", "r", encoding="utf-8") as f:\n    content = f.read()\n    print(content)\n\n# Построчное чтение\nwith open("file.txt", "r", encoding="utf-8") as f:\n    for line in f:\n        print(line.strip())`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-oop',
+            title: 'ООП в Python',
+            description: 'Классы и объекты',
+            content: [
+              {
+                type: 'text',
+                content: 'Python поддерживает объектно-ориентированное программирование. Классы — это шаблоны для создания объектов.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Классы',
+                  language: 'python',
+                  code: `class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    \n    def greet(self):\n        return f"Привет, меня зовут {self.name}!"\n    \n    def birthday(self):\n        self.age += 1\n        print(f"{self.name} теперь {self.age} лет")\n\n# Создание объекта\nalice = Person("Alice", 25)\nprint(alice.greet())  # Привет, меня зовут Alice!\nalice.birthday()      # Alice теперь 26 лет\n\n# Наследование\nclass Student(Person):\n    def __init__(self, name, age, course):\n        super().__init__(name, age)\n        self.course = course`
+                }
+              }
+            ]
+          },
+          {
+            id: 'python-exceptions',
+            title: 'Обработка ошибок',
+            description: 'try, except, finally',
+            content: [
+              {
+                type: 'text',
+                content: 'Ошибки в Python обрабатываются с помощью конструкции try/except. Это позволяет программе не падать при ошибках.'
+              },
+              {
+                type: 'code',
+                content: {
+                  title: 'Исключения',
+                  language: 'python',
+                  code: `try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print("На ноль делить нельзя!")\nexcept Exception as e:\n    print(f"Ошибка: {e}")\nelse:\n    print("Выполняется, если ошибок не было")\nfinally:\n    print("Это выполнится всегда")\n\n# Практический пример\ndef safe_divide(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return None\n\nprint(safe_divide(10, 2))  # 5.0\nprint(safe_divide(10, 0))  # None`
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ];
+
 
 // Генерация навигации
 export const getNavItems = () => {
