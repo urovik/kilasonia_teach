@@ -253,6 +253,7 @@ noscript.innerHTML = `
 `;
 document.head.appendChild(noscript);
 
+
 // ========== РЕНДЕРИНГ ==========
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
