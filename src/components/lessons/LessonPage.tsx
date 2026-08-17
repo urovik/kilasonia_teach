@@ -13,20 +13,19 @@ const LessonPage: React.FC = () => {
 
   const { isLessonCompleted, toggleLesson, setTotalLessons } = useProgress();
   
-  // ✅ Принудительное обновление при смене урока
   const [forceUpdate, setForceUpdate] = useState(0);
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
-  // ✅ ОБНОВЛЯЕМ ТОЛЬКО ПРИ ИЗМЕНЕНИИ lessonId
   const prevLessonIdRef = React.useRef(lessonId);
   
   useEffect(() => {
     if (prevLessonIdRef.current !== lessonId) {
       prevLessonIdRef.current = lessonId;
       setForceUpdate(prev => prev + 1);
+      setIsNavOpen(false);
     }
   }, [lessonId]);
 
-  // ✅ Получаем данные с принудительным обновлением
   const section = useMemo(() => {
     return sectionId ? sectionsData.find((s) => s.id === sectionId) : undefined;
   }, [sectionId, forceUpdate]);
@@ -39,7 +38,6 @@ const LessonPage: React.FC = () => {
     return chapter?.lessons.find((l) => l.id === lessonId);
   }, [chapter, lessonId, forceUpdate]);
 
-  // ✅ Обновляем общее количество уроков
   useEffect(() => {
     if (sectionId) {
       const foundSection = sectionsData.find((s) => s.id === sectionId);
@@ -53,7 +51,6 @@ const LessonPage: React.FC = () => {
     }
   }, [sectionId, setTotalLessons]);
 
-  // ✅ Хуки useCallback ДО всех проверок
   const getChapterUrl = useCallback((targetChapterId: string) => {
     if (!section) return '';
     const targetChapter = section.chapters.find(c => c.id === targetChapterId);
@@ -89,7 +86,10 @@ const LessonPage: React.FC = () => {
     setForceUpdate(prev => prev + 1);
   }, []);
 
-  // ✅ Проверки ПОСЛЕ всех хуков
+  const toggleNav = useCallback(() => {
+    setIsNavOpen(prev => !prev);
+  }, []);
+
   if (!sectionId || !chapterId || !lessonId) {
     return <div style={styles.error}>Неверный URL</div>;
   }
@@ -168,9 +168,30 @@ const LessonPage: React.FC = () => {
       </div>
 
       <div style={styles.content}>
-        {/* Левое меню */}
-        <aside style={styles.sidebar}>
-          <h3 style={styles.sidebarTitle}>{chapter.title}</h3>
+        <button 
+          onClick={toggleNav} 
+          style={styles.navToggle}
+          aria-label="Показать меню уроков"
+        >
+          ☰ {chapter.title}
+        </button>
+
+        <aside 
+          style={{
+            ...styles.sidebar,
+            ...(isNavOpen ? styles.sidebarOpen : {}),
+          }}
+        >
+          <div style={styles.sidebarHeader}>
+            <h3 style={styles.sidebarTitle}>{chapter.title}</h3>
+            <button 
+              onClick={toggleNav} 
+              style={styles.sidebarClose}
+              aria-label="Закрыть меню"
+            >
+              ✕
+            </button>
+          </div>
           <ul style={styles.lessonList}>
             {allLessons.map((l: any, index: number) => {
               const isCompletedLesson = isLessonCompleted(l.id);
@@ -188,7 +209,10 @@ const LessonPage: React.FC = () => {
                       ...styles.lessonLink,
                       ...(l.id === lessonId ? styles.activeLessonLink : {}),
                     }}
-                    onClick={handleLessonChange}
+                    onClick={() => {
+                      handleLessonChange();
+                      setIsNavOpen(false);
+                    }}
                   >
                     <span style={styles.lessonNumber}>{index + 1}</span>
                     {l.title}
@@ -200,7 +224,10 @@ const LessonPage: React.FC = () => {
           </ul>
         </aside>
 
-        {/* Основной контент */}
+        {isNavOpen && (
+          <div style={styles.overlay} onClick={toggleNav} />
+        )}
+
         <main style={styles.main}>
           <div style={styles.headerRow}>
             <h1 style={styles.lessonTitle}>{lesson.title}</h1>
@@ -224,11 +251,10 @@ const LessonPage: React.FC = () => {
             <p style={styles.lessonDescription}>{lesson.description}</p>
           )}
 
-          <div style={styles.lessonBody}>
+          <div className="lesson-body" style={styles.lessonBody}>
             {lesson.content.map((block, index) => renderContent(block, index))}
           </div>
 
-          {/* Навигация между уроками */}
           <div style={styles.lessonNav}>
             <div style={styles.navGroup}>
               {prevLesson && (
@@ -283,7 +309,7 @@ const LessonPage: React.FC = () => {
 };
 
 const styles: any = {
-  container: {
+ container: {
     padding: '20px 0',
   },
   breadcrumbs: {
@@ -308,8 +334,22 @@ const styles: any = {
   },
   content: {
     display: 'grid',
-    gridTemplateColumns: '260px 1fr',
+    gridTemplateColumns: '280px 1fr',
     gap: '24px',
+    position: 'relative' as const,
+  },
+  navToggle: {
+    display: 'none',
+    padding: '10px 16px',
+    backgroundColor: 'var(--bg-card)',
+    color: 'var(--text)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
+    fontSize: '0.95rem',
+    cursor: 'pointer',
+    width: '100%',
+    textAlign: 'left' as const,
+    marginBottom: '8px',
   },
   sidebar: {
     backgroundColor: 'var(--bg-card)',
@@ -322,10 +362,48 @@ const styles: any = {
     maxHeight: 'calc(100vh - 100px)',
     overflowY: 'auto' as const,
   },
+  sidebarOpen: {
+    display: 'block',
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    width: '300px',
+    height: '100%',
+    zIndex: 1001,
+    borderRadius: 0,
+    boxShadow: '0 4px 30px rgba(0,0,0,0.3)',
+    animation: 'slideIn 0.3s ease',
+  },
+  sidebarHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '12px',
+  },
+  sidebarClose: {
+    display: 'none',
+    background: 'none',
+    border: 'none',
+    fontSize: '1.2rem',
+    color: 'var(--text-muted)',
+    cursor: 'pointer',
+    padding: '4px 8px',
+  },
+  overlay: {
+    display: 'none',
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    zIndex: 1000,
+    animation: 'fadeIn 0.3s ease',
+  },
   sidebarTitle: {
     fontSize: '1rem',
     color: 'var(--text)',
-    marginBottom: '12px',
+    margin: 0,
     paddingBottom: '8px',
     borderBottom: '1px solid var(--border)',
   },
@@ -378,6 +456,8 @@ const styles: any = {
     padding: '28px',
     boxShadow: '0 1px 3px var(--shadow)',
     minWidth: 0,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   headerRow: {
     display: 'flex',
@@ -416,7 +496,7 @@ const styles: any = {
   },
   completeButtonActive: {
     backgroundColor: 'var(--success)',
-    borderColor: 'var(--success)',
+    border: '2px solid var(--success)',
     color: '#fff',
   },
   lessonTitle: {
@@ -433,12 +513,18 @@ const styles: any = {
   },
   lessonBody: {
     marginBottom: '24px',
+    maxWidth: '100%',
+    overflow: 'hidden',
+    wordWrap: 'break-word',
+    wordBreak: 'break-word',
   },
   paragraph: {
     lineHeight: '1.8',
     color: 'var(--text)',
     marginBottom: '14px',
     fontSize: '1rem',
+    maxWidth: '100%',
+    wordWrap: 'break-word',
   },
   heading: {
     fontSize: '1.3rem',
@@ -447,22 +533,29 @@ const styles: any = {
     marginBottom: '12px',
     paddingBottom: '6px',
     borderBottom: '1px solid var(--border)',
+    maxWidth: '100%',
+    wordWrap: 'break-word',
   },
   list: {
     margin: '12px 0',
     paddingLeft: '22px',
     lineHeight: '1.8',
+    maxWidth: '100%',
+    wordWrap: 'break-word',
   },
   listItem: {
     marginBottom: '6px',
     fontSize: '1rem',
     color: 'var(--text)',
+    maxWidth: '100%',
+    wordWrap: 'break-word',
   },
   codeBlock: {
     backgroundColor: 'var(--code-bg)',
     borderRadius: 'var(--radius-sm)',
     margin: '16px 0',
     overflow: 'hidden',
+    maxWidth: '100%',
   },
   codeHeader: {
     display: 'flex',
@@ -484,6 +577,9 @@ const styles: any = {
     fontSize: '0.85rem',
     lineHeight: 1.6,
     overflow: 'auto',
+    maxWidth: '100%',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-all',
   },
   lessonNav: {
     display: 'flex',
@@ -534,6 +630,16 @@ styleSheet.textContent = `
     opacity: 0.9;
   }
 
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   @media (max-width: 1024px) {
     .content {
       grid-template-columns: 220px 1fr !important;
@@ -545,16 +651,34 @@ styleSheet.textContent = `
 
   @media (max-width: 768px) {
     .content {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 16px !important;
+      display: block !important;
+    }
+    .nav-toggle {
+      display: block !important;
     }
     .sidebar {
-      position: relative !important;
+      display: none !important;
+      position: fixed !important;
       top: 0 !important;
+      left: 0 !important;
+      width: 300px !important;
+      height: 100% !important;
+      z-index: 1001 !important;
+      border-radius: 0 !important;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3) !important;
+      animation: slideIn 0.3s ease !important;
       max-height: none !important;
-      padding: 14px !important;
-      overflow-y: visible !important;
+      overflow-y: auto !important;
+      padding: 20px !important;
+    }
+    .sidebar-open {
+      display: block !important;
+    }
+    .sidebar-close {
+      display: block !important;
+    }
+    .overlay {
+      display: block !important;
     }
     .main { padding: 18px !important; }
     .lesson-title { font-size: 1.4rem !important; }
@@ -591,7 +715,8 @@ styleSheet.textContent = `
 
   @media (max-width: 480px) {
     .main { padding: 14px !important; border-radius: var(--radius-sm) !important; }
-    .sidebar { padding: 10px !important; border-radius: var(--radius-sm) !important; }
+    .sidebar { width: 280px !important; padding: 16px !important; }
+    .sidebar-title { font-size: 0.9rem !important; }
     .lesson-title {
       font-size: 1.2rem !important;
       margin-bottom: 8px !important;
@@ -608,11 +733,11 @@ styleSheet.textContent = `
       padding: 6px 10px !important;
     }
     .paragraph,
-    .list-item { font-size: 0.9rem !important; line-height: 1.6 !important; }
-    .heading { font-size: 1.2rem !important; }
+    .list-item { font-size: 0.9rem !important; line-height: 1.5 !important; }
+    .heading { font-size: 1.1rem !important; }
     .code {
-      font-size: 0.75rem !important;
-      padding: 10px !important;
+      font-size: 0.7rem !important;
+      padding: 8px !important;
     }
     .code-block { border-radius: var(--radius-sm) !important; }
     .breadcrumbs {

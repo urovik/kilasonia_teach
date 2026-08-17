@@ -2,26 +2,29 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../common/Navbar';
 import { getNavItems } from '../../data/topics';
+import RotatePrompt from '../common/RotatePrompt';
 
 const MainLayout: React.FC = () => {
   const navItems = getNavItems();
 
   return (
-    <div style={styles.layout}>
-      <Navbar items={navItems} />
-      <main style={styles.main}>
-        <div style={styles.container}>
-          <Outlet />
-        </div>
-      </main>
-    </div>
+    <RotatePrompt>
+      <div style={styles.layout}>
+        <Navbar items={navItems} />
+        <main style={styles.main}>
+          <div style={styles.container}>
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </RotatePrompt>
   );
 };
 
-const styles: any = {
+const styles = {
   layout: {
     minHeight: '100vh',
-    backgroundColor: 'var(--bg, #f0f4f8)',
+    backgroundColor: 'var(--bg, #f8fafc)',
   },
   main: {
     padding: '24px 0',

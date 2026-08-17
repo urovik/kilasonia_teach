@@ -17,6 +17,8 @@ export interface ILesson {
   title: string;
   description?: string;
   content: IContentBlock[];
+  isPremium?: boolean;   // ← платный урок
+  price?: string;
 }
 
 // Тип для главы

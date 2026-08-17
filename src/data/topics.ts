@@ -1,6 +1,7 @@
 import { ISection } from '../types';
 
 export const sectionsData: ISection[] = [
+  
   {
     id: 'C',
     title: 'язык C',
