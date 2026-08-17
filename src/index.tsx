@@ -215,7 +215,7 @@ document.head.appendChild(styleSheet);
 
 // ========== ЯНДЕКС.МЕТРИКА ==========
 // ✅ ID берется ТОЛЬКО из .env, без запасного варианта
-const YM_ID = process.env.REACT_APP_YA_ID;
+const YM_ID = process.env.REACT_APP_YA_ID || 110792885;
 
 if (YM_ID) {
   // Загружаем скрипт Метрики
